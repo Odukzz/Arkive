@@ -42,20 +42,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!-- Three.js for the background animation -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.138.3/build/three.module.js"
-        }
-    }
-    </script>
-
     <style>
         /* --- Base Styles --- */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000;
+            background-color: #000000; /* Set a black base for other sections */
             color: #ffffff;
             overflow-x: hidden; /* Prevent horizontal scroll */
         }
@@ -70,7 +61,7 @@
             top: 0;
             width: 50%;
             height: 100vh;
-            background-color: #000000;
+            background-color: #000000; /* UPDATED: Black curtains */
             z-index: 100;
             transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1);
         }
@@ -79,19 +70,6 @@
 
         body.loaded #left-curtain { transform: translateX(-100%); }
         body.loaded #right-curtain { transform: translateX(100%); }
-
-        /* --- Animated Background --- */
-        #shader-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 1s ease-in 0.5s; /* Fade in after curtains open */
-        }
-        body.loaded #shader-canvas { opacity: 1; }
 
         /* --- Content Overlay --- */
         #content-overlay {
@@ -106,6 +84,11 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
+            /* UPDATED: Black overlay to show pattern */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/arkivebg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
         body.loaded #content-overlay {
             opacity: 1;
@@ -185,31 +168,36 @@
         }
 
 
-        /* --- Final Slider Styles --- */
-        .slider-container {
+        /* --- Scrollable Slider Styles --- */
+        .slider-wrapper {
             position: relative;
-            max-width: 900px;
-            margin: auto;
-            min-height: 550px; /* Adjusted height */
+        }
+        .slider-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+            scroll-behavior: smooth; /* Smooth scrolling for auto-scroll */
+        }
+        .slider-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
         }
         
         .slider-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 0 0 100%; /* Each slide takes full container width */
+            width: 100%;
+            scroll-snap-align: center; /* Snap to the center of the viewport */
+            padding: 0 1rem; /* Add some spacing around the phone */
         }
         
-        .slider-slide.is-active {
-            opacity: 1;
-        }
-
         .phone-mockup {
             max-height: 500px;
             object-fit: contain;
             border-radius: 2rem;
             border: 8px solid #222;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            margin: 0 auto; /* Center the phone mockup within the slide */
         }
 
         .slider-pagination {
@@ -235,7 +223,6 @@
             transform: scale(1.2);
             box-shadow: 0 0 10px #00ff00;
         }
-
 
         /* --- Interaction & Animation Styles --- */
         .scroll-animate {
@@ -319,14 +306,18 @@
             60% { transform: translateX(-50%) translateY(-10px); }
         }
         
-        /* --- Animated Collage Styles --- */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        /* --- Animated Heading Styles --- */
+        .animated-text-part {
+            position: absolute;
+            transition: opacity 0.8s ease-in-out;
+            opacity: 0;
+            white-space: nowrap;
         }
-
-        .collage-item {
-            animation: float 8s ease-in-out infinite;
+        .animated-text-part.is-visible {
+            opacity: 1;
+        }
+        .animated-text-part.is-hidden {
+            opacity: 0;
         }
 
         /* --- Coming Soon Modal Styles --- */
@@ -348,9 +339,6 @@
     <!-- Curtain Elements -->
     <div id="left-curtain" class="curtain"></div>
     <div id="right-curtain" class="curtain"></div>
-
-    <!-- Animated Shader Background -->
-    <canvas id="shader-canvas"></canvas>
 
     <main id="main-content">
         <!-- Hero Section -->
@@ -378,7 +366,7 @@
                 Arkive is where African fashion lives. Scroll, discover and vibe with curated brands that match your energy and style.
             </p>
             
-            <p class="text-2xl font-bold font-mono text-center mt-8 header-glow">African Fashion to the world</p>
+            <p class="text-2xl font-bold font-mono text-center mt-8 header-glow">African Fashion to the World</p>
     
             <a href="#download-section" class="flex btn-solid-anim font-bold py-3 px-8 rounded-lg font-mono items-center gap-2 mt-8">
                 <span>Try for Free</span>
@@ -412,12 +400,14 @@
     
         <!-- Feature Slider Section -->
         <section id="feature-slider-section" class="content-section">
-            <div class="container mx-auto max-w-6xl">
-                <div id="slider-container" class="slider-container">
-                     <!-- Slides will be injected here -->
+            <div class="container mx-auto max-w-4xl">
+                <div class="slider-wrapper">
+                    <div id="slider-container" class="slider-container">
+                         <!-- Slides will be injected here by JS -->
+                    </div>
                 </div>
                 <div id="slider-pagination" class="slider-pagination">
-                    <!-- Dots will be injected here -->
+                    <!-- Dots will be injected here by JS -->
                 </div>
             </div>
         </section>
@@ -467,8 +457,12 @@
         <!-- App Download Section -->
         <section id="download-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center">
-                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom header-glow font-mono">ONE PLATFORM, A THOUSAND BRANDS</h2>
-                <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing" style="transition-delay: 100ms;">From our Arkive to yours.</p>
+                <!-- UPDATED HTML for animated heading -->
+                <h2 id="animated-heading" class="text-3xl md:text-4xl font-bold scroll-animate from-bottom header-glow font-mono relative h-12 md:h-16 flex items-center justify-center">
+                    <span class="animated-text-part part-1 is-visible">ONE PLATFORM</span>
+                    <span class="animated-text-part part-2">A THOUSAND BRANDS</span>
+                </h2>
+                <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing">From our Arkive to yours.</p>
                 <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10">
                   <a href="#" class="download-btn w-full md:w-auto flex items-center justify-center gap-4 px-6 py-4 rounded-lg scroll-animate from-bottom" style="transition-delay: 200ms;">
                     <!-- Real Apple Logo SVG -->
@@ -619,94 +613,7 @@
     }
     </script>
 
-    <script type="module">
-        import * as THREE from 'three';
-
-        // --- GLSL Shader Code for Subtle Smoke ---
-        const vertexShader = `
-            varying vec2 vUv;
-            void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `;
-
-        const fragmentShader = `
-            varying vec2 vUv;
-            uniform float u_time;
-
-            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-            vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-
-            float snoise(vec2 v) {
-                const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-                vec2 i  = floor(v + dot(v, C.yy) );
-                vec2 x0 = v -   i + dot(i, C.xx);
-                vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-                vec4 x12 = x0.xyxy + C.xxzz;
-                x12.xy -= i1;
-                i = mod289(i);
-                vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
-                vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-                m = m*m; m = m*m;
-                vec3 x = 2.0 * fract(p * C.www) - 1.0;
-                vec3 h = abs(x) - 0.5;
-                vec3 ox = floor(x + 0.5);
-                vec3 a0 = x - ox;
-                m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-                vec3 g;
-                g.x  = a0.x  * x0.x  + h.x  * x0.y;
-                g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-                return 130.0 * dot(m, g);
-            }
-
-            void main() {
-                vec2 st = vUv;
-                st.y *= 2.0; st *= 1.5;
-                st.x -= u_time * 0.02;
-                float n = snoise(st);
-                float color = smoothstep(0.0, 1.0, n) * 0.15;
-                gl_FragColor = vec4(vec3(color), 1.0);
-            }
-        `;
-
-        // --- Standard Three.js Setup ---
-        let scene, camera, renderer, material, clock;
-
-        function initThreeJS() {
-            scene = new THREE.Scene();
-            clock = new THREE.Clock();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 1;
-            const canvas = document.getElementById('shader-canvas');
-            renderer = new THREE.WebGLRenderer({ canvas: canvas });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            const geometry = new THREE.PlaneGeometry(2, 2);
-            material = new THREE.ShaderMaterial({
-                vertexShader,
-                fragmentShader,
-                uniforms: { u_time: { value: 0.0 } }
-            });
-            const mesh = new THREE.Mesh(geometry, material);
-            scene.add(mesh);
-            window.addEventListener('resize', onWindowResize);
-            animateThreeJS();
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animateThreeJS() {
-            requestAnimationFrame(animateThreeJS);
-            material.uniforms.u_time.value = clock.getElapsedTime();
-            renderer.render(scene, camera);
-        }
-
+    <script>
         // --- Typewriter Animation ---
         function startTyping(element, callback) {
             const text = element.dataset.text;
@@ -769,43 +676,79 @@
             initPageNavigation();
             // Initialize Coming Soon Modal
             initComingSoonModal();
+            // Initialize Animated Heading
+            initAnimatedHeading();
         });
 
-        initThreeJS();
+        // --- Animated Heading Logic ---
+        function initAnimatedHeading() {
+            const heading = document.getElementById('animated-heading');
+            if (!heading) return;
 
-        // --- Final Feature Slider Logic ---
+            const part1 = heading.querySelector('.part-1');
+            const part2 = heading.querySelector('.part-2');
+            let animationInterval;
+
+            const headingObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        clearInterval(animationInterval); // Clear previous interval
+                        animationInterval = setInterval(() => {
+                            if (part1.classList.contains('is-visible')) {
+                                part1.classList.remove('is-visible');
+                                part1.classList.add('is-hidden');
+                                setTimeout(() => {
+                                    part2.classList.add('is-visible');
+                                    part2.classList.remove('is-hidden');
+                                }, 800);
+                            } else {
+                                part2.classList.remove('is-visible');
+                                part2.classList.add('is-hidden');
+                                setTimeout(() => {
+                                    part1.classList.add('is-visible');
+                                    part1.classList.remove('is-hidden');
+                                }, 800);
+                            }
+                        }, 3000);
+                    } else {
+                        clearInterval(animationInterval);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            headingObserver.observe(heading);
+        }
+
+        // --- Hybrid Auto/Manual Scroll Slider Logic ---
         function initFeatureSlider() {
             const features = [
-                { image: `assets/demo/IMG_6684.png` },
-                { image: `assets/demo/IMG_6685.png` },
-                { image: `assets/demo/IMG_6686.png` },
-                { image: `assets/demo/IMG_6687.png` },
-                { image: `assets/demo/IMG_6688.png` },
-                { image: `assets/demo/IMG_6689.png` },
-                { image: `assets/demo/IMG_6690.png` },
-                { image: `assets/demo/IMG_6691.png` },
-                { image: `assets/demo/IMG_6692.png` },
+                { image: `/assets/demo/IMG_6684.png` },
+                { image: `/assets/demo/IMG_6685.png` },
+                { image: `/assets/demo/IMG_6686.png` },
+                { image: `/assets/demo/IMG_6687.png` },
+                { image: `/assets/demo/IMG_6688.png` },
+                { image: `/assets/demo/IMG_6689.png` },
+                { image: `/assets/demo/IMG_6690.png` },
+                { image: `/assets/demo/IMG_6691.png` },
+                { image: `/assets/demo/IMG_6692.png` },
             ];
 
+            const sliderWrapper = document.querySelector('.slider-wrapper');
             const sliderContainer = document.getElementById('slider-container');
             const paginationContainer = document.getElementById('slider-pagination');
             let autoSlideInterval;
             let currentIndex = 0;
+            
+            sliderContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
 
-            // Inject slides and dots
             features.forEach((feature, index) => {
-                // Create Slide
                 const slide = document.createElement('div');
                 slide.className = 'slider-slide';
                 slide.dataset.index = index;
-                slide.innerHTML = `
-                    <div class="flex justify-center items-center h-full">
-                         <img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup">
-                    </div>
-                `;
+                slide.innerHTML = `<img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup" onerror="this.onerror=null;this.src='https://placehold.co/400x800/0a0a0a/4A4A4A?text=Image+Not+Found';">`;
                 sliderContainer.appendChild(slide);
 
-                // Create Dot
                 const dot = document.createElement('button');
                 dot.className = 'slider-dot';
                 dot.dataset.index = index;
@@ -814,43 +757,88 @@
 
             const slides = sliderContainer.querySelectorAll('.slider-slide');
             const dots = paginationContainer.querySelectorAll('.slider-dot');
+            
+            const updateActiveDot = () => {
+                let centerMostIndex = -1;
+                let minDistance = Infinity;
+                const containerCenter = sliderContainer.getBoundingClientRect().x + sliderContainer.offsetWidth / 2;
 
-            function showSlide(index) {
-                currentIndex = index % slides.length;
+                slides.forEach((slide, index) => {
+                    const slideCenter = slide.getBoundingClientRect().x + slide.offsetWidth / 2;
+                    const distance = Math.abs(containerCenter - slideCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        centerMostIndex = index;
+                    }
+                });
 
-                slides.forEach(s => s.classList.remove('is-active'));
-                slides[currentIndex].classList.add('is-active');
+                if (centerMostIndex !== -1) {
+                    currentIndex = centerMostIndex;
+                    dots.forEach(d => d.classList.remove('is-active'));
+                    if(dots[currentIndex]) {
+                       dots[currentIndex].classList.add('is-active');
+                    }
+                }
+            };
 
-                dots.forEach(d => d.classList.remove('is-active'));
-                dots[currentIndex].classList.add('is-active');
-            }
+            const stopAutoSlide = () => clearInterval(autoSlideInterval);
 
-            function startAutoSlide() {
+            const startAutoSlide = () => {
                 stopAutoSlide();
                 autoSlideInterval = setInterval(() => {
-                    showSlide(currentIndex + 1);
-                }, 3000); // 3-second transition
-            }
+                    let nextIndex = (currentIndex + 1) % slides.length;
+                    const slideWidth = sliderContainer.offsetWidth;
+                    sliderContainer.scrollTo({
+                        left: nextIndex * slideWidth,
+                        behavior: 'smooth'
+                    });
+                }, 3000); // 3-second interval
+            };
+            
+            let scrollTimeout;
+            sliderContainer.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(updateActiveDot, 50);
+            });
 
-            function stopAutoSlide() {
-                clearInterval(autoSlideInterval);
-            }
+            const resetTimerOnInteraction = () => {
+                stopAutoSlide();
+                startAutoSlide();
+            };
+            
+            sliderWrapper.addEventListener('mouseenter', stopAutoSlide);
+            sliderWrapper.addEventListener('mouseleave', resetTimerOnInteraction);
+            sliderContainer.addEventListener('touchstart', stopAutoSlide, {passive: true});
+            sliderContainer.addEventListener('touchend', resetTimerOnInteraction);
 
-            // Event listeners for dots
+
             dots.forEach(dot => {
                 dot.addEventListener('click', () => {
-                    showSlide(parseInt(dot.dataset.index));
-                    startAutoSlide(); // Restart timer on manual click
+                    const index = parseInt(dot.dataset.index);
+                    const slideWidth = sliderContainer.offsetWidth;
+                    sliderContainer.scrollTo({
+                        left: index * slideWidth,
+                        behavior: 'smooth'
+                    });
+                    resetTimerOnInteraction();
                 });
             });
 
-            // Pause on hover
-            sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-            sliderContainer.addEventListener('mouseleave', startAutoSlide);
+            // Use Intersection Observer to only run the slider when it's visible
+            const sliderObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startAutoSlide();
+                    } else {
+                        stopAutoSlide();
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sliderObserver.observe(sliderWrapper);
 
             // Initial setup
-            showSlide(0);
-            startAutoSlide();
+            if (dots.length > 0) dots[0].classList.add('is-active');
         }
         
         // --- Page Navigation Logic ---
@@ -866,39 +854,25 @@
             const pageSections = [contactPage, careersPage];
 
             function showPage(pageToShow) {
-                // Hide main content
                 mainContent.style.display = 'none';
-                // Hide all page sections
                 pageSections.forEach(page => page.style.display = 'none');
-                
-                // Show the selected page
                 if (pageToShow) {
                     pageToShow.style.display = 'block';
                 }
-                
-                window.scrollTo(0, 0); // Scroll to top
+                window.scrollTo(0, 0);
             }
 
             function showHome() {
-                pageSections.forEach(page => page.style.display = 'none');
+                pageSections.forEach(page => {
+                    page.style.display = 'none'
+                });
                 mainContent.style.display = 'block';
                 window.scrollTo(0, 0);
             }
 
-            homeLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showHome();
-            });
-
-            contactLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showPage(contactPage);
-            });
-
-            careersLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showPage(careersPage);
-            });
+            homeLink.addEventListener('click', (e) => { e.preventDefault(); showHome(); });
+            contactLink.addEventListener('click', (e) => { e.preventDefault(); showPage(contactPage); });
+            careersLink.addEventListener('click', (e) => { e.preventDefault(); showPage(careersPage); });
         }
 
         // --- Coming Soon Modal Logic ---
