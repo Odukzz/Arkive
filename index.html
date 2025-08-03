@@ -574,7 +574,7 @@
             <div class="flex gap-8 order-1 md:order-2 mb-4 md:mb-0">
                 <a href="#" id="home-link" class="text-gray-400 hover:text-white transition-colors text-lg font-bold">Home</a>
                 <a href="#" id="contact-link" class="text-gray-400 hover:text-white transition-colors text-lg font-bold">Contact</a>
-                <a href="#" id="careers-link" class="text-gray-400 hover:text-white transition-colors text-lg font-bold">Careers</a>
+                <a id="careers-link" class="text-gray-400 text-lg font-bold opacity-50 pointer-events-none">Careers</a>
             </div>
             <p class="text-center md:text-left order-2 md:order-1">&copy; 2025 Arkive. All Rights Reserved.</p>
         </div>
@@ -842,7 +842,7 @@
 
             homeLink.addEventListener('click', (e) => { e.preventDefault(); showHome(); });
             contactLink.addEventListener('click', (e) => { e.preventDefault(); showPage(contactPage); });
-            careersLink.addEventListener('click', (e) => { e.preventDefault(); showPage(careersPage); });
+            // careersLink.addEventListener('click', (e) => { e.preventDefault(); showPage(careersPage); });
         }
 
         // --- Coming Soon Modal Logic ---
