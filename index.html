@@ -55,22 +55,6 @@
             font-family: 'IBM Plex Mono', monospace;
         }
 
-        /* --- Curtain Reveal Animation --- */
-        .curtain {
-            position: fixed;
-            top: 0;
-            width: 50%;
-            height: 100vh;
-            background-color: #000000; /* UPDATED: Black curtains */
-            z-index: 100;
-            transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1);
-        }
-        #left-curtain { left: 0; }
-        #right-curtain { right: 0; }
-
-        body.loaded #left-curtain { transform: translateX(-100%); }
-        body.loaded #right-curtain { transform: translateX(100%); }
-
         /* --- Content Overlay --- */
         #content-overlay {
             position: relative;
@@ -81,22 +65,14 @@
             justify-content: center;
             align-items: center;
             z-index: 2;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
-            /* UPDATED: Restored background image for hero section */
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/Arkivebg.jpg');
             background-size: cover;
             background-position: center;
         }
-        body.loaded #content-overlay {
-            opacity: 1;
-            transform: translateY(0);
-        }
         
         .logo-image {
             height: auto;
-            width: 130%;
+            width: 130%; /* Restored to original size */
             max-width: 40rem; /* Controls the max size of the logo */
             padding: 0 2rem;
         }
@@ -318,16 +294,12 @@
     </style>
 </head>
 <body>
-    <!-- Curtain Elements -->
-    <div id="left-curtain" class="curtain"></div>
-    <div id="right-curtain" class="curtain"></div>
-
     <main id="main-content">
         <!-- Hero Section -->
         <div id="content-overlay" class="p-6 pb-24">
             
             <!-- Logo Animation Container -->
-            <div class="w-full max-w-2xl mx-auto my-8 h-24 relative">
+            <div class="w-full max-w-2xl mx-auto my-8 h-24 relative overflow-hidden">
                 <!-- Static Logo (visible for first 5s) -->
                 <div id="static-logo-container" class="absolute inset-0 flex justify-center items-center transition-opacity duration-500 ease-in-out opacity-100 z-10">
                     <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
@@ -646,11 +618,6 @@
         
         // --- On Load Initializations ---
         window.addEventListener('load', () => {
-            // Curtain reveal
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 500);
-            
             // Scroll-triggered animations
             const animatedElements = document.querySelectorAll('.scroll-animate');
             const scrollObserver = new IntersectionObserver((entries) => {
