@@ -84,43 +84,42 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
-            /* UPDATED: Black overlay to show pattern */
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/arkivebg.jpg');
+            /* UPDATED: Restored background image for hero section */
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/Arkivebg.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
         }
         body.loaded #content-overlay {
             opacity: 1;
             transform: translateY(0);
         }
         
-        /* --- REWORKED Marquee Styles for Mobile --- */
-        .marquee-container {
-            overflow: hidden;
-            width: 100%;
-            height: 20rem; 
-            display: flex;
-            align-items: center;
+        .logo-image {
+            height: auto;
+            width: 130%;
+            max-width: 40rem; /* Controls the max size of the logo */
+            padding: 0 2rem;
         }
 
-        .marquee-track {
-            display: flex;
-            flex-shrink: 0;
-            animation: marqueeScroll 20s linear infinite;
-        }
-        
-        .marquee-content {
-            display: flex;
-            flex-shrink: 0;
-            align-items: center;
-            justify-content: space-around;
-        }
-        
-        .logo-image {
-            height: 12rem; 
+        /* --- Logo Animation Styles --- */
+        .logo-image-scroll {
+            height: 5rem; /* 80px */
             width: auto;
-            padding: 0 2rem;
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .logo-marquee {
+            width: max-content; /* Let the width be determined by its content */
+            animation: marquee 20s linear infinite;
+            animation-play-state: paused; /* Animation is started via JS */
+        }
+
+        .logo-marquee.is-animating {
+            animation-play-state: running;
         }
 
         /* --- Section Styles --- */
@@ -129,6 +128,10 @@
             z-index: 5;
             background-color: #000;
             padding: 8rem 1rem;
+        }
+
+        #brand-section {
+            background-color: #000000;
         }
         
         #feature-slider-section {
@@ -142,7 +145,6 @@
             background-image: url('assets/arkive-ptrn-green.png');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed; /* Parallax effect */
         }
         .magazine-overlay {
             background-color: rgba(0,0,0,0.7);
@@ -306,20 +308,6 @@
             60% { transform: translateX(-50%) translateY(-10px); }
         }
         
-        /* --- Animated Heading Styles --- */
-        .animated-text-part {
-            position: absolute;
-            transition: opacity 0.8s ease-in-out;
-            opacity: 0;
-            white-space: nowrap;
-        }
-        .animated-text-part.is-visible {
-            opacity: 1;
-        }
-        .animated-text-part.is-hidden {
-            opacity: 0;
-        }
-
         /* --- Coming Soon Modal Styles --- */
         #coming-soon-modal {
             backdrop-filter: blur(5px);
@@ -329,10 +317,6 @@
             line-height: 1;
         }
 
-        @keyframes marqueeScroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
     </style>
 </head>
 <body>
@@ -344,25 +328,26 @@
         <!-- Hero Section -->
         <div id="content-overlay" class="p-6 pb-24">
             
-            <div class="w-full">
-                <div class="hidden md:flex justify-center">
-                    <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo - African Fashion Platform" class="logo-image">
+            <!-- Logo Animation Container -->
+            <div class="w-full max-w-2xl mx-auto my-8 h-24 relative">
+                <!-- Static Logo (visible for first 5s on mobile, always on desktop) -->
+                <div id="static-logo-container" class="absolute inset-0 flex justify-center items-center transition-opacity duration-500 ease-in-out opacity-100 z-10">
+                    <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
                 </div>
-                <div class="marquee-container md:hidden">
-                     <div class="marquee-track">
-                        <div class="marquee-content">
-                            <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
-                            <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
-                        </div>
-                        <div class="marquee-content" aria-hidden="true">
-                            <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
-                            <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
-                        </div>
+                
+                <!-- Scrolling Logo Container (fades in after 5s on mobile only) -->
+                <div id="scrolling-logo-container" class="w-full h-full overflow-hidden opacity-0 transition-opacity duration-500 ease-in-out">
+                    <div class="logo-marquee flex items-center h-full">
+                        <!-- Content is duplicated to create a seamless loop. -->
+                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
+                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
+                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
+                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
                     </div>
                 </div>
             </div>
             
-            <p class="font-mono text-lg text-gray-200 max-w-2xl mx-auto text-center mt-8 animate-typing">
+            <p class="font-mono text-lg text-gray-200 max-w-2xl mx-auto text-center animate-typing">
                 Arkive is where African fashion lives. Scroll, discover and vibe with curated brands that match your energy and style.
             </p>
             
@@ -382,7 +367,7 @@
         <section id="brand-section" class="content-section">
             <div class="container mx-auto max-w-5xl">
                 <div class="text-center mb-16">
-                    <h2 class="text-4xl md:text-5xl font-bold scroll-animate from-bottom header-glow font-mono">MORE THAN A VIBE</h2>
+                    <h2 class="text-4xl md:text-5xl font-bold scroll-animate from-bottom text-green-400 font-mono">MORE THAN A VIBE</h2>
                     <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing" style="transition-delay: 100ms;">It's a statement in African fashion.</p>
                 </div>
     
@@ -391,7 +376,7 @@
                         <img src="assets/PHOTO-2025-07-22-22-52-55.jpg" alt="Model wearing modern African print jacket from a Nigerian designer on Arkive" class="rounded-lg w-full">
                     </div>
                     <div>
-                        <h3 class="text-3xl font-bold mb-4 scroll-animate from-right header-glow font-mono" style="transition-delay: 300ms;">FOR THE MAIN CHARACTERS</h3>
+                        <h3 class="text-3xl font-bold mb-4 scroll-animate from-right text-green-400 font-mono" style="transition-delay: 300ms;">FOR THE MAIN CHARACTERS</h3>
                         <p class="font-mono text-gray-300 leading-relaxed animate-typing">We don't just sell clothes. We curate energy. Each piece of African clothing in our Arkive is hand-picked for the ones who set the trends, not follow them. This is your uniform for being unapologetically you.</p>
                     </div>
                 </div>
@@ -415,7 +400,7 @@
         <!-- List Your Brand Section -->
         <section id="list-brand-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center scroll-animate zoom-in">
-                <h2 class="text-4xl md:text-5xl font-bold header-glow font-mono">JOIN THE MOVEMENT</h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-green-400 font-mono">JOIN THE MOVEMENT</h2>
                 <p class="font-mono text-gray-300 mt-6 text-lg leading-relaxed max-w-2xl mx-auto animate-typing">
                     Are you an emerging African designer? Your voice is the culture. Arkive is the platform where your designs connect with the world. Stop waiting for the spotlight—claim it. Let's make waves together.
                 </p>
@@ -429,7 +414,7 @@
         <section id="magazine-section">
             <div class="magazine-overlay py-20 md:py-32">
                 <div class="container mx-auto max-w-3xl text-center scroll-animate zoom-in">
-                    <h2 class="text-4xl md:text-6xl font-bold header-glow font-mono">ARKIVE MAGAZINE</h2>
+                    <h2 class="text-4xl md:text-6xl font-bold text-green-400 font-mono">ARKIVE MAGAZINE</h2>
                     <p class="font-mono text-gray-300 mt-6 text-lg leading-relaxed animate-typing">
                         Style isn't just what you wear, it's how you wear it. The Arkive is our digital zine for African fashion inspiration, trend deep-dives, and conversations with the culture. It's the official lookbook for your next era.
                     </p>
@@ -443,7 +428,7 @@
         <!-- Mailing List Section -->
         <section id="mailing-list-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center">
-                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom header-glow font-mono">BE THE FIRST TO KNOW</h2>
+                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom text-green-400 font-mono">BE THE FIRST TO KNOW</h2>
                 <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing" style="transition-delay: 100ms;">Join our mailing list for launch updates and brand partnership info on African designers.</p>
                 <form class="mt-8 flex flex-col md:flex-row gap-4 max-w-lg mx-auto scroll-animate from-bottom" style="transition-delay: 200ms;">
                     <input type="email" placeholder="Enter your email" class="w-full bg-gray-900 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white font-mono">
@@ -457,10 +442,8 @@
         <!-- App Download Section -->
         <section id="download-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center">
-                <!-- UPDATED HTML for animated heading -->
-                <h2 id="animated-heading" class="text-3xl md:text-4xl font-bold scroll-animate from-bottom header-glow font-mono relative h-12 md:h-16 flex items-center justify-center">
-                    <span class="animated-text-part part-1 is-visible">ONE PLATFORM</span>
-                    <span class="animated-text-part part-2">A THOUSAND BRANDS</span>
+                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom text-green-400 font-mono">
+                    ONE PLATFORM, A THOUSAND BRANDS
                 </h2>
                 <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing">From our Arkive to yours.</p>
                 <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10">
@@ -489,7 +472,7 @@
     <!-- Page Sections -->
     <section id="contact-page" class="page-section content-section">
         <div class="container mx-auto max-w-3xl text-center">
-            <h2 class="text-4xl md:text-5xl font-bold header-glow font-mono">GET IN TOUCH</h2>
+            <h2 class="text-4xl md:text-5xl font-bold text-green-400 font-mono">GET IN TOUCH</h2>
             <p class="font-mono text-gray-400 mt-6 text-lg">Have a question, a partnership idea, or just want to vibe? Drop us a line.</p>
 
             <form class="mt-12 text-left max-w-xl mx-auto space-y-6">
@@ -517,12 +500,12 @@
     <section id="careers-page" class="page-section content-section">
         <div class="container mx-auto max-w-4xl">
             <div class="text-center">
-                <h2 class="text-4xl md:text-5xl font-bold header-glow font-mono">JOIN THE MOVEMENT</h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-green-400 font-mono">JOIN THE MOVEMENT</h2>
                 <p class="font-mono text-gray-400 mt-6 text-lg max-w-2xl mx-auto">We're building the future of African fashion. We're looking for passionate, creative, and driven individuals to help us write the next chapter.</p>
             </div>
 
             <div class="mt-16 space-y-12">
-                <h3 class="text-3xl font-bold font-mono text-center header-glow">OPEN POSITIONS</h3>
+                <h3 class="text-3xl font-bold font-mono text-center text-green-400">OPEN POSITIONS</h3>
                 <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-lg">
                     <div class="md:flex justify-between items-center">
                         <div>
@@ -581,7 +564,7 @@
     <div id="coming-soon-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[110]" style="display: none;">
         <div class="bg-[#111] border border-gray-800 rounded-lg p-8 text-center max-w-sm w-full relative">
             <button id="close-modal-btn" class="absolute top-2 right-2 text-gray-500 hover:text-white">&times;</button>
-            <h3 class="text-2xl font-bold font-mono header-glow">COMING SOON</h3>
+            <h3 class="text-2xl font-bold font-mono text-green-400">COMING SOON</h3>
             <p class="font-mono text-gray-400 mt-4">The Arkive Magazine is launching soon. Stay tuned for style inspo, trend deep-dives, and conversations with the culture.</p>
         </div>
     </div>
@@ -637,6 +620,31 @@
             }
             type();
         }
+
+        // --- Logo Animation (Mobile Only) ---
+        function initLogoAnimation() {
+            // This function now only runs the animation on mobile screens (less than 768px wide).
+            // On larger screens, the logo will remain static by default.
+            if (window.innerWidth < 768) {
+                // Wait 5 seconds after page load, then start the animation
+                setTimeout(() => {
+                    const staticContainer = document.getElementById('static-logo-container');
+                    const scrollingContainer = document.getElementById('scrolling-logo-container');
+                    const marquee = scrollingContainer ? scrollingContainer.querySelector('.logo-marquee') : null;
+
+                    if (staticContainer && scrollingContainer && marquee) {
+                        // Fade out the static logo
+                        staticContainer.style.opacity = '0';
+                        
+                        // Simultaneously fade in the scrolling logo container
+                        scrollingContainer.style.opacity = '1';
+                        
+                        // And start the CSS animation
+                        marquee.classList.add('is-animating');
+                    }
+                }, 5000); // 5000ms = 5 seconds
+            }
+        }
         
         // --- On Load Initializations ---
         window.addEventListener('load', () => {
@@ -676,61 +684,23 @@
             initPageNavigation();
             // Initialize Coming Soon Modal
             initComingSoonModal();
-            // Initialize Animated Heading
-            initAnimatedHeading();
+            // Initialize Logo Animation
+            initLogoAnimation();
+
         });
-
-        // --- Animated Heading Logic ---
-        function initAnimatedHeading() {
-            const heading = document.getElementById('animated-heading');
-            if (!heading) return;
-
-            const part1 = heading.querySelector('.part-1');
-            const part2 = heading.querySelector('.part-2');
-            let animationInterval;
-
-            const headingObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        clearInterval(animationInterval); // Clear previous interval
-                        animationInterval = setInterval(() => {
-                            if (part1.classList.contains('is-visible')) {
-                                part1.classList.remove('is-visible');
-                                part1.classList.add('is-hidden');
-                                setTimeout(() => {
-                                    part2.classList.add('is-visible');
-                                    part2.classList.remove('is-hidden');
-                                }, 800);
-                            } else {
-                                part2.classList.remove('is-visible');
-                                part2.classList.add('is-hidden');
-                                setTimeout(() => {
-                                    part1.classList.add('is-visible');
-                                    part1.classList.remove('is-hidden');
-                                }, 800);
-                            }
-                        }, 3000);
-                    } else {
-                        clearInterval(animationInterval);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            headingObserver.observe(heading);
-        }
 
         // --- Hybrid Auto/Manual Scroll Slider Logic ---
         function initFeatureSlider() {
             const features = [
-                { image: `/assets/demo/IMG_6684.png` },
-                { image: `/assets/demo/IMG_6685.png` },
-                { image: `/assets/demo/IMG_6686.png` },
-                { image: `/assets/demo/IMG_6687.png` },
-                { image: `/assets/demo/IMG_6688.png` },
-                { image: `/assets/demo/IMG_6689.png` },
-                { image: `/assets/demo/IMG_6690.png` },
-                { image: `/assets/demo/IMG_6691.png` },
-                { image: `/assets/demo/IMG_6692.png` },
+                { image: `assets/demo/IMG_6684.png` },
+                { image: `assets/demo/IMG_6685.png` },
+                { image: `assets/demo/IMG_6686.png` },
+                { image: `assets/demo/IMG_6687.png` },
+                { image: `assets/demo/IMG_6688.png` },
+                { image: `assets/demo/IMG_6689.png` },
+                { image: `assets/demo/IMG_6690.png` },
+                { image: `assets/demo/IMG_6691.png` },
+                { image: `assets/demo/IMG_6692.png` },
             ];
 
             const sliderWrapper = document.querySelector('.slider-wrapper');
