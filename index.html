@@ -442,7 +442,7 @@
         <!-- App Download Section -->
         <section id="download-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center">
-                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom text-green-400 font-mono">
+                <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom font-mono header-glow">
                     ONE PLATFORM, A THOUSAND BRANDS
                 </h2>
                 <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing">From our Arkive to yours.</p>
@@ -716,7 +716,7 @@
                 const slide = document.createElement('div');
                 slide.className = 'slider-slide';
                 slide.dataset.index = index;
-                slide.innerHTML = `<img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup" onerror="this.onerror=null;this.src='https://placehold.co/400x800/0a0a0a/4A4A4A?text=Image+Not+Found';">`;
+                slide.innerHTML = `<img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup">`;
                 sliderContainer.appendChild(slide);
 
                 const dot = document.createElement('button');
@@ -871,4 +871,3 @@
 
 </body>
 </html>
-
