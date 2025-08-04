@@ -568,18 +568,15 @@
 
     <script>
         // --- Manual Scroll Restoration ---
-        // Prevents the browser from automatically restoring the scroll position on refresh.
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual';
         }
-        // On page load, force scroll to the top.
         window.onbeforeunload = function () {
             window.scrollTo(0, 0);
         };
 
         // --- Typewriter Animation ---
-        function startTyping(element, callback) {
-            const text = element.dataset.text;
+        function startTyping(element, text, callback) {
             element.textContent = '';
             let i = 0;
             const cursor = document.createElement('span');
@@ -603,32 +600,23 @@
 
         // --- Logo Animation (Mobile Only) ---
         function initLogoAnimation() {
-            // This function now only runs the animation on mobile screens (less than 768px wide).
-            // On larger screens, the logo will remain static by default.
             if (window.innerWidth < 768) {
-                // Wait 5 seconds after page load, then start the animation
                 setTimeout(() => {
                     const staticContainer = document.getElementById('static-logo-container');
                     const scrollingContainer = document.getElementById('scrolling-logo-container');
                     const marquee = scrollingContainer ? scrollingContainer.querySelector('.logo-marquee') : null;
 
                     if (staticContainer && scrollingContainer && marquee) {
-                        // Fade out the static logo
                         staticContainer.style.opacity = '0';
-                        
-                        // Simultaneously fade in the scrolling logo container
                         scrollingContainer.style.opacity = '1';
-                        
-                        // And start the CSS animation
                         marquee.classList.add('is-animating');
                     }
-                }, 5000); // 5000ms = 5 seconds
+                }, 5000);
             }
         }
         
         // --- On Load Initializations ---
         window.addEventListener('load', () => {
-            // Ensure we are at the top of the page on load
             window.scrollTo(0, 0);
             
             // Scroll-triggered animations
@@ -640,31 +628,62 @@
             }, { threshold: 0.1 });
             animatedElements.forEach(el => scrollObserver.observe(el));
 
-            // Typewriter animation setup
+            // --- Typewriter animation setup (FIXED) ---
             const typingElements = document.querySelectorAll('.animate-typing');
             typingElements.forEach(el => {
-                el.dataset.text = el.textContent;
-                el.textContent = '';
+                const textToType = el.textContent.trim();
+                
+                // Set the parent element to be a positioning context
+                el.style.position = 'relative';
+                // Give it a minimum height to prevent it from collapsing if the text is short
+                el.style.minHeight = '1em';
+
+                // Clear the original element's content
+                el.innerHTML = '';
+
+                // 1. Create the invisible placeholder to reserve the correct space
+                const placeholder = document.createElement('span');
+                placeholder.textContent = textToType;
+                placeholder.style.visibility = 'hidden';
+                
+                // 2. Create the visible container where the typing will actually happen
+                const typingTarget = document.createElement('span');
+                typingTarget.classList.add('typing-target'); // Add a class to find it later
+                typingTarget.style.position = 'absolute';
+                typingTarget.style.top = '0';
+                typingTarget.style.left = '0';
+                typingTarget.style.width = '100%';
+                typingTarget.style.height = '100%';
+                
+                // Add both new elements to the original container
+                el.appendChild(placeholder);
+                el.appendChild(typingTarget);
+
+                // Store the text on the parent element for the observer to retrieve
+                el.dataset.text = textToType;
             });
+
+            // The observer will now trigger the animation on the correct child element
             const typingObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        startTyping(entry.target);
+                        const typingTarget = entry.target.querySelector('.typing-target');
+                        const text = entry.target.dataset.text;
+                        if (typingTarget && text) {
+                            startTyping(typingTarget, text);
+                        }
                         observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.8 });
+            
             typingElements.forEach(el => typingObserver.observe(el));
 
-            // Initialize Feature Slider
+            // Initialize other features
             initFeatureSlider();
-            // Initialize Page Navigation
             initPageNavigation();
-            // Initialize Coming Soon Modal
             initComingSoonModal();
-            // Initialize Logo Animation
             initLogoAnimation();
-
         });
 
         // --- Hybrid Auto/Manual Scroll Slider Logic ---
