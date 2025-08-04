@@ -72,9 +72,9 @@
         
         .logo-image {
             height: auto;
-            width: 120%; /* Adjusted logo width for mobile view */
-            max-width: 50rem; /* Controls the max size of the logo - Increased for laptop view */
-            padding: 0 2rem;
+            width: 120%; /* Restored original size */
+            max-width: 50rem; /* Controls the max size of the logo */
+            padding: 0 1rem; 
         }
 
         /* --- New Logo Pulse Animation --- */
@@ -292,8 +292,10 @@
         <div id="content-overlay" class="p-6 pb-24">
             
             <!-- Logo Animation Container -->
-            <div class="w-full max-w-2xl mx-auto my-8 h-24 flex justify-center items-center">
-                <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image logo-pulse-animation">
+            <div class="w-full overflow-hidden">
+                <div class="w-full max-w-2xl mx-auto my-8 h-24 flex justify-center items-center">
+                    <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image logo-pulse-animation">
+                </div>
             </div>
             
             <p class="font-mono text-lg text-gray-200 max-w-2xl mx-auto text-center animate-typing">
@@ -392,7 +394,7 @@
         <section id="download-section" class="content-section">
             <div class="container mx-auto max-w-3xl text-center">
                 <h2 class="text-3xl md:text-4xl font-bold scroll-animate from-bottom font-mono header-glow">
-                    ONE PLATFORM, A THOUSAND BRANDS
+                    ONE PLATFORM,<br>A THOUSAND BRANDS
                 </h2>
                 <p class="font-mono text-gray-400 mt-4 scroll-animate from-bottom animate-typing">From our Arkive to yours.</p>
                 <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10">
