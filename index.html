@@ -73,29 +73,22 @@
         .logo-image {
             height: auto;
             width: 120%; /* Adjusted logo width for mobile view */
-            max-width: 50rem; /* Controls the max size of the logo */
+            max-width: 50rem; /* Controls the max size of the logo - Increased for laptop view */
             padding: 0 2rem;
         }
 
-        /* --- Logo Animation Styles --- */
-        .logo-image-scroll {
-            height: 5rem; /* 80px */
-            width: auto;
+        /* --- New Logo Pulse Animation --- */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
-        @keyframes marquee {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-
-        .logo-marquee {
-            width: max-content; /* Let the width be determined by its content */
-            animation: marquee 10s linear infinite;
-            animation-play-state: paused; /* Animation is started via JS */
-        }
-
-        .logo-marquee.is-animating {
-            animation-play-state: running;
+        .logo-pulse-animation {
+            animation: pulse 5s ease-in-out infinite;
         }
 
         /* --- Section Styles --- */
@@ -299,22 +292,8 @@
         <div id="content-overlay" class="p-6 pb-24">
             
             <!-- Logo Animation Container -->
-            <div class="w-full max-w-2xl mx-auto my-8 h-24 relative overflow-hidden">
-                <!-- Static Logo (visible for first 5s) -->
-                <div id="static-logo-container" class="absolute inset-0 flex justify-center items-center transition-opacity duration-500 ease-in-out opacity-100 z-10">
-                    <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image">
-                </div>
-                
-                <!-- Scrolling Logo Container (fades in after 5s) -->
-                <div id="scrolling-logo-container" class="w-full h-full overflow-hidden opacity-0 transition-opacity duration-500 ease-in-out">
-                    <div class="logo-marquee flex items-center h-full">
-                        <!-- Content is duplicated to create a seamless loop. -->
-                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
-                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
-                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
-                        <img src="assets/ArkiveLogo.PNG" alt="" class="logo-image-scroll flex-shrink-0 px-8" onerror="this.onerror=null;this.src='https://placehold.co/300x96/000000/00ff00?text=Arkive';">
-                    </div>
-                </div>
+            <div class="w-full max-w-2xl mx-auto my-8 h-24 flex justify-center items-center">
+                <img src="assets/ArkiveLogo.PNG" alt="Arkive Logo" class="logo-image logo-pulse-animation">
             </div>
             
             <p class="font-mono text-lg text-gray-200 max-w-2xl mx-auto text-center animate-typing">
@@ -597,23 +576,6 @@
             }
             type();
         }
-
-        // --- Logo Animation (Mobile Only) ---
-        function initLogoAnimation() {
-            if (window.innerWidth < 768) {
-                setTimeout(() => {
-                    const staticContainer = document.getElementById('static-logo-container');
-                    const scrollingContainer = document.getElementById('scrolling-logo-container');
-                    const marquee = scrollingContainer ? scrollingContainer.querySelector('.logo-marquee') : null;
-
-                    if (staticContainer && scrollingContainer && marquee) {
-                        staticContainer.style.opacity = '0';
-                        scrollingContainer.style.opacity = '1';
-                        marquee.classList.add('is-animating');
-                    }
-                }, 5000);
-            }
-        }
         
         // --- On Load Initializations ---
         window.addEventListener('load', () => {
@@ -683,7 +645,6 @@
             initFeatureSlider();
             initPageNavigation();
             initComingSoonModal();
-            initLogoAnimation();
         });
 
         // --- Hybrid Auto/Manual Scroll Slider Logic ---
