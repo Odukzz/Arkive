@@ -285,6 +285,12 @@
             line-height: 1;
         }
 
+        /* --- NEW: Responsive Headline Style --- */
+        .responsive-headline {
+            white-space: nowrap; /* Prevents text from wrapping */
+            font-size: clamp(1rem, 5vw, 1.5rem); /* Scales font size: min, preferred, max */
+        }
+
     </style>
 </head>
 <body>
@@ -301,7 +307,8 @@
                 Arkive is where African fashion lives. Discover curated fashion brands across Africa that match your energy and style.
             </p>
             
-            <p class="text-2xl font-bold font-mono text-center mt-8 header-glow">African Fashion to the World</p>
+            <!-- UPDATED: Headline with responsive class -->
+            <p class="font-bold font-mono text-center mt-8 header-glow responsive-headline">African Fashion to the World</p>
     
             <a href="#download-section" class="flex btn-solid-anim font-bold py-3 px-8 rounded-lg font-mono items-center gap-2 mt-8">
                 <span>Try for Free</span>
@@ -830,3 +837,4 @@
 
 </body>
 </html>
+
