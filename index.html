@@ -612,7 +612,7 @@
                 if (i < text.length) {
                     element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
                     i++;
-                    setTimeout(type, 30);
+                    setTimeout(type, 40);
                 } else {
                     setTimeout(() => {
                         if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
