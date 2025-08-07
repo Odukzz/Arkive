@@ -151,6 +151,10 @@
             -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
             scrollbar-width: none; /* Hide scrollbar for Firefox */
             scroll-behavior: smooth; /* Smooth scrolling for auto-scroll */
+            /* FIX: Add min-height and a background to prevent layout shifts */
+            min-height: 510px; 
+            background-color: #111;
+            border-radius: 1rem;
         }
         .slider-container::-webkit-scrollbar {
             display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
@@ -168,6 +172,9 @@
             object-fit: contain;
             margin: 0 auto; /* Center the phone mockup within the slide */
             border-radius: 1rem; /* Added a subtle radius for a clean look */
+            /* FIX: Ensure it behaves like a block to prevent spacing issues */
+            display: block;
+            width: 100%;
         }
 
         .slider-pagination {
@@ -307,7 +314,6 @@
                 Arkive is where African fashion lives. Discover curated fashion brands across Africa that match your energy and style.
             </p>
             
-            <!-- UPDATED: Headline with responsive class -->
             <p class="font-bold font-mono text-center mt-8 header-glow responsive-headline">African Fashion to the World</p>
     
             <a href="#download-section" class="flex btn-solid-anim font-bold py-3 px-8 rounded-lg font-mono items-center gap-2 mt-8">
@@ -463,21 +469,17 @@
             <h2 class="text-4xl md:text-5xl font-bold text-green-400 font-mono">GET IN TOUCH</h2>
             <p class="font-mono text-gray-400 mt-6 text-lg">Have a question, a partnership idea, or just want to vibe? Drop us a line.</p>
 
-            <!-- UPDATED: Form now points to Web3Forms -->
             <form id="web3-contact-form" action="https://api.web3forms.com/submit" method="POST" class="mt-12 text-left max-w-xl mx-auto space-y-6">
                 <div>
                     <label for="name" class="font-mono text-gray-400">Name</label>
-                    <!-- UPDATED: Added name attribute -->
                     <input type="text" id="name" name="name" required class="w-full mt-2 bg-gray-900 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 font-mono">
                 </div>
                 <div>
                     <label for="email" class="font-mono text-gray-400">Email</label>
-                    <!-- UPDATED: Added name attribute -->
                     <input type="email" id="email" name="email" required class="w-full mt-2 bg-gray-900 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 font-mono">
                 </div>
                 <div>
                     <label for="message" class="font-mono text-gray-400">Message</label>
-                    <!-- UPDATED: Added name attribute -->
                     <textarea id="message" name="message" required rows="5" class="w-full mt-2 bg-gray-900 border border-gray-700 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 font-mono"></textarea>
                 </div>
                 <div class="text-center">
@@ -561,7 +563,7 @@
         </div>
     </div>
     
-    <!-- NEW: Success Modal -->
+    <!-- Success Modal -->
     <div id="success-modal" class="modal fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[110]" style="display: none;">
         <div class="bg-[#111] border border-gray-800 rounded-lg p-8 text-center max-w-sm w-full relative">
             <button id="close-success-modal-btn" class="modal-close-btn absolute top-2 right-2 text-gray-500 hover:text-white">&times;</button>
@@ -599,7 +601,6 @@
 
     <script>
         // --- CONFIGURATION ---
-        // NEW: Add your Web3Forms Access Key here.
         const WEB3FORMS_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
 
 
@@ -693,10 +694,10 @@
             initFeatureSlider();
             initPageNavigation();
             initModals();
-            initWeb3Forms(); // UPDATED: Initialize the Web3Forms logic
+            initWeb3Forms();
         });
 
-        // --- Hybrid Auto/Manual Scroll Slider Logic ---
+        // --- REFACTORED: Slider Logic ---
         function initFeatureSlider() {
             const features = [
                 { image: `assets/demo/IMG_6684.PNG` },
@@ -713,19 +714,24 @@
             const sliderWrapper = document.querySelector('.slider-wrapper');
             const sliderContainer = document.getElementById('slider-container');
             const paginationContainer = document.getElementById('slider-pagination');
+            
+            if (!sliderWrapper || !sliderContainer || !paginationContainer) return;
+
             let autoSlideInterval;
             let currentIndex = 0;
             
+            // --- 1. Build the slider content ---
             sliderContainer.innerHTML = '';
             paginationContainer.innerHTML = '';
 
             features.forEach((feature, index) => {
+                // Create Slide
                 const slide = document.createElement('div');
                 slide.className = 'slider-slide';
-                slide.dataset.index = index;
-                slide.innerHTML = `<img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup">`;
+                slide.innerHTML = `<img src="${feature.image}" alt="Feature image ${index + 1}" class="phone-mockup" loading="lazy">`;
                 sliderContainer.appendChild(slide);
 
+                // Create Dot
                 const dot = document.createElement('button');
                 dot.className = 'slider-dot';
                 dot.dataset.index = index;
@@ -734,74 +740,83 @@
 
             const slides = sliderContainer.querySelectorAll('.slider-slide');
             const dots = paginationContainer.querySelectorAll('.slider-dot');
-            
-            const updateActiveDot = () => {
-                let centerMostIndex = -1;
-                let minDistance = Infinity;
-                const containerCenter = sliderContainer.getBoundingClientRect().x + sliderContainer.offsetWidth / 2;
 
-                slides.forEach((slide, index) => {
-                    const slideCenter = slide.getBoundingClientRect().x + slide.offsetWidth / 2;
-                    const distance = Math.abs(containerCenter - slideCenter);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        centerMostIndex = index;
-                    }
+            // --- 2. Define Core Functions ---
+
+            const updateActiveUI = (index) => {
+                currentIndex = index;
+                dots.forEach((d, i) => {
+                    d.classList.toggle('is-active', i === currentIndex);
                 });
-
-                if (centerMostIndex !== -1) {
-                    currentIndex = centerMostIndex;
-                    dots.forEach(d => d.classList.remove('is-active'));
-                    if(dots[currentIndex]) {
-                       dots[currentIndex].classList.add('is-active');
-                    }
-                }
             };
 
-            const stopAutoSlide = () => clearInterval(autoSlideInterval);
+            const stopAutoSlide = () => {
+                clearInterval(autoSlideInterval);
+            };
 
             const startAutoSlide = () => {
-                stopAutoSlide();
+                stopAutoSlide(); // Prevent multiple intervals
                 autoSlideInterval = setInterval(() => {
-                    let nextIndex = (currentIndex + 1) % slides.length;
-                    const slideWidth = sliderContainer.offsetWidth;
+                    const nextIndex = (currentIndex + 1) % slides.length;
                     sliderContainer.scrollTo({
-                        left: nextIndex * slideWidth,
+                        left: nextIndex * sliderContainer.offsetWidth,
                         behavior: 'smooth'
                     });
+                    // Note: The 'scroll' event will handle updating the active dot
                 }, 3000);
             };
+
+            const handleManualScroll = () => {
+                const scrollLeft = sliderContainer.scrollLeft;
+                const slideWidth = sliderContainer.offsetWidth;
+                const newIndex = Math.round(scrollLeft / slideWidth);
+
+                if (newIndex !== currentIndex) {
+                    updateActiveUI(newIndex);
+                }
+            };
             
+            // --- 3. Setup Event Listeners ---
+
+            // User interaction listeners
             let scrollTimeout;
             sliderContainer.addEventListener('scroll', () => {
                 clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(updateActiveDot, 50);
+                scrollTimeout = setTimeout(handleManualScroll, 50); // Debounce scroll event
             });
-
+            
             const resetTimerOnInteraction = () => {
                 stopAutoSlide();
-                startAutoSlide();
+                setTimeout(startAutoSlide, 5000); // Restart after 5s of inactivity
             };
-            
-            sliderWrapper.addEventListener('mouseenter', stopAutoSlide);
-            sliderWrapper.addEventListener('mouseleave', resetTimerOnInteraction);
-            sliderContainer.addEventListener('touchstart', stopAutoSlide, {passive: true});
-            sliderContainer.addEventListener('touchend', resetTimerOnInteraction);
 
+            sliderWrapper.addEventListener('mouseenter', stopAutoSlide);
+            sliderWrapper.addEventListener('mouseleave', startAutoSlide);
+            sliderContainer.addEventListener('touchstart', stopAutoSlide, { passive: true });
+            sliderContainer.addEventListener('touchend', resetTimerOnInteraction);
 
             dots.forEach(dot => {
                 dot.addEventListener('click', () => {
                     const index = parseInt(dot.dataset.index);
-                    const slideWidth = sliderContainer.offsetWidth;
                     sliderContainer.scrollTo({
-                        left: index * slideWidth,
+                        left: index * sliderContainer.offsetWidth,
                         behavior: 'smooth'
                     });
+                    updateActiveUI(index);
                     resetTimerOnInteraction();
                 });
             });
 
-            // UPDATED: Changed threshold to 0.75
+            // Page visibility listener
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopAutoSlide();
+                } else {
+                    startAutoSlide();
+                }
+            });
+
+            // Intersection observer to start/stop when in view
             const sliderObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -814,7 +829,13 @@
 
             sliderObserver.observe(sliderWrapper);
 
-            if (dots.length > 0) dots[0].classList.add('is-active');
+            // --- 4. Initialize Slider State ---
+            const initializeSlider = () => {
+                sliderContainer.scrollLeft = 0;
+                updateActiveUI(0);
+            };
+            
+            initializeSlider();
         }
         
         // --- Page Navigation Logic ---
@@ -887,18 +908,16 @@
             });
         }
 
-        // --- NEW: Web3Forms Contact Form Handling ---
+        // --- Web3Forms Contact Form Handling ---
         function initWeb3Forms() {
             const form = document.getElementById('web3-contact-form');
             if (!form) return;
 
-            // --- 1. Create and append hidden inputs ---
             const hiddenInputs = {
                 access_key: WEB3FORMS_ACCESS_KEY,
                 subject: "New Contact Form Submission from Arkive Website",
                 from_name: "Arkive Contact Form",
-                // Redirect back to the current page URL without hash/query
-                redirect: window.location.href.split('?')[0].split('#')[0] 
+                redirect: window.location.href.split('?')[0].split('#')[0] + "?success=true#contact-page"
             };
 
             for (const name in hiddenInputs) {
@@ -909,17 +928,19 @@
                 form.appendChild(input);
             }
 
-            // --- 2. Check for success parameter on page load ---
             const urlParams = new URLSearchParams(window.location.search);
-            const isSuccess = urlParams.get('success');
-
-            if (isSuccess === 'true') {
+            if (urlParams.get('success') === 'true') {
                 const successModal = document.getElementById('success-modal');
                 if (successModal) {
+                    // Show the contact page first, then the modal
+                    const contactPage = document.getElementById('contact-page');
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.style.display = 'none';
+                    contactPage.style.display = 'block';
                     successModal.style.display = 'flex';
                 }
                 // Clean up the URL
-                history.replaceState(null, '', window.location.pathname + window.location.hash);
+                history.replaceState(null, '', window.location.pathname + '#contact-page');
             }
         }
 
